@@ -1,15 +1,23 @@
 <odoo>
-    <data noupdate="1">
+    <data noupdate="0">
         <record id="email_notif_post" model="mail.template">
             <field name="name">Invoice Post Email</field>
             <field name="model_id" ref="account.model_account_move"/>
-            <field name="subject">{{ object.name }}</field>
-            <field name="email_from">{{ (object.user_id.email) }}</field>
+            <field name="subject">{{ object.name or 'Invoice Notification' }}</field>
+            <field name="email_from">{{ object.user_id.email or 'admin@yourcompany.com' }}</field>
             <field name="partner_to">{{ object.partner_id.id }}</field>
             <field name="description">Invoice Post Notification</field>
             <field name="body_html" type="html">
-                <div>
-                </div>
+                <t t-set="partner_name" t-value="object.partner_id.name or 'Dear Partner'"/>
+                <t t-set="invoice_name" t-value="object.name or 'No Invoice Number'"/>
+                <t t="object.partner_id">
+                    <div>
+                        Halo <strong><t t-esc="partner_name"/></strong>,<br/>
+                        Invoice Anda <strong>#<t t-esc="invoice_name"/></strong> telah divalidasi!<br/>
+                        Terima Kasih,<br/>
+                        Tim Admin
+                    </div>
+                </t>
             </field>
         </record>
     </data>
